@@ -175,5 +175,41 @@
         false
       ]
     }
+  },
+  "d972e3e2b8e68ed5ffd905f5d9cfbeb0dafd7377af2811c2b2b669a739a3750b": {
+    "query": "\n            SELECT id, name, weight, diet from dinos\n            ",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "name",
+          "type_info": "Text"
+        },
+        {
+          "ordinal": 2,
+          "name": "weight",
+          "type_info": "Int4"
+        },
+        {
+          "ordinal": 3,
+          "name": "diet",
+          "type_info": "Text"
+        }
+      ],
+      "parameters": {
+        "Left": []
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        true
+      ]
+    }
   }
 }
