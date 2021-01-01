@@ -6,7 +6,7 @@ application:
 databases:
 - type: "POSTGRESQL"
   name: "tide-tera-db"
-  version: "13"
+  version: "12"
 routers:
 - name: "main-tide-tera"
   routes:
