@@ -1,11 +1,15 @@
+---
 application:
-  name: tide-tera
-  project: tide-example
-  publicly_accessible: true
-  organization: QoveryCommunity
+  name: "tide-tera"
+  project: "tide-tera"
+  organization: "QoveryCommunity"
+databases:
+- type: "POSTGRESQL"
+  name: "tide-tera-db"
+  version: "13"
 routers:
-- name: main
+- name: "main-tide-tera"
   routes:
-  - application_name: tide-tera
+  - application_name: "tide-tera"
     paths:
-    - /
+    - "/"
