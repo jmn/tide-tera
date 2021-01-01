@@ -29,7 +29,7 @@ COPY . .
 
 # Build our application, leveraging the cached deps!
 
-#ENV SQLX_OFFLINE true
+ENV SQLX_OFFLINE true
 ENV PORT 9091
 
 RUN cargo build --release --bin tide-tera
