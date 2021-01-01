@@ -1,0 +1,19 @@
+[package]
+name = "tide-tera"
+version = "0.1.0"
+authors = ["jmn <norlund@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+anyhow = "1.0"
+sqlx = { version = "0.4.2", features = [ "runtime-async-std-native-tls", "macros", "chrono", "json", "postgres", "uuid", "offline"] }
+chrono = "0.4"
+dotenv = "0.15"
+uuid = { version = "0.8", features = ["v4", "serde"] }
+async-std = { version = "1.6", features = [ "attributes" ] }
+tide = "0.15.0"
+
+serde = { version = "1.0.115", features = ["derive"] }
+serde_json = "1.0.57"
+tera = "1.6.1"
+tide-tera = "0.2.3"
