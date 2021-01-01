@@ -1,0 +1,11 @@
+application:
+  name: tide-tera
+  project: tide-example
+  publicly_accessible: true
+  organization: QoveryCommunity
+routers:
+- name: main
+  routes:
+  - application_name: tide-tera
+    paths:
+    - /
