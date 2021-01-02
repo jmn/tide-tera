@@ -5,6 +5,12 @@
 {% endblock title %}
 
 {% block content %}
+{% if user_email %}
+<p>
+Hello {{user_email}}
+</p>
+{% endif %}
+
 {% if dinos %}
     <table class="u-full-width">
         <thead>
