@@ -43,6 +43,7 @@ RUN apt-get update -y \
 
 COPY --from=builder /app/target/release/tide-tera tide-tera
 COPY templates templates
+COPY public public
 
 EXPOSE 9091
 
