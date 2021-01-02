@@ -9,6 +9,9 @@ databases:
   version: "12"
 routers:
 - name: "main-tide-tera"
+  custom_domains:
+    - branch: main
+      domain: tide.jmnorlund.net
   routes:
   - application_name: "tide-tera"
     paths:
