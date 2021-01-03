@@ -97,7 +97,7 @@ impl RestEntity {
         let rows = query_as!(
             Dino,
             r#"
-            SELECT id, name, weight, diet from dinos
+            SELECT id as "id!", name, weight, diet from dinos
             "#
         )
         .fetch_all(&db_pool)
