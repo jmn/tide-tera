@@ -1,7 +1,9 @@
+use http_types::Method;
+
 use {
     crate::{Session, Request},
     failure::Fail,
-    oauth2::{AsyncCodeTokenRequest, AuthorizationCode, CsrfToken, Scope, TokenResponse},
+    oauth2::{AuthorizationCode, CsrfToken, Scope, TokenResponse},
     serde::Deserialize,
     tide::{Redirect, Response, Result, StatusCode},
     http_types
@@ -37,8 +39,7 @@ pub(super) async fn login_authorized(req: Request) -> Result {
     let code = AuthorizationCode::new(query.code);
     let token_req = req.state().google_oauth_client.exchange_code(code);
     let token = token_req
-        .request_async(oauth2::reqwest::async_http_client)
-        .await
+        .request(oauth2::reqwest::http_client)
         .map_err(Fail::compat)?;
     let access_token = token.access_token();
 
