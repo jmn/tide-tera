@@ -1,3 +1,6 @@
+use google_oauth::make_client_github;
+use oauth2::PkceCodeChallenge;
+
 use {
     crate::{config::AppConfig, google_oauth::make_client},
     anyhow::Context,
@@ -8,15 +11,15 @@ use {
     sqlx::{query, query_as, PgPool},
     std::env,
     tera::Tera,
-    tide::{listener::Listener, Body, Response, Server, Redirect},
+    tide::{listener::Listener, Body, Redirect, Response, Server},
+    tide_secure_cookie_session::SecureCookieSessionMiddleware,
     tide_tera::prelude::*,
     uuid::Uuid,
-    tide_secure_cookie_session::SecureCookieSessionMiddleware,
 };
 
+mod auth;
 mod config;
 mod google_oauth;
-mod auth;
 
 // #[derive(Debug, Serialize, Deserialize)]
 // struct MySession {
@@ -44,6 +47,7 @@ pub type Request = tide::Request<AppState>;
 pub struct AppState {
     config: AppConfig,
     google_oauth_client: BasicClient,
+    github_oauth_client: BasicClient,
     db_pool: PgPool,
     tera: Tera,
 }
@@ -199,6 +203,14 @@ async fn main() -> tide::Result<()> {
             redirect_url: env::var("APP_GOOGLE_OAUTH_REDIRECT_URL")
                 .context("get APP_GOOGLE_OAUTH_REDIRECT_URL environment variable")?,
         },
+        github_oauth: config::GitHubOauthConfig {
+            client_id: env::var("APP_GITHUB_OAUTH_CLIENT_ID")
+                .context("get APP_GITHUB_OAUTH_CLIENT_ID environment variable")?,
+            client_secret: env::var("APP_GITHUB_OAUTH_CLIENT_SECRET")
+                .context("get APP_GITHUB_OAUTH_CLIENT_SECRET environment variable")?,
+            redirect_url: env::var("APP_GITHUB_OAUTH_REDIRECT_URL")
+                .context("get APP_GITHUB_OAUTH_REDIRECT_URL environment variable")?,
+        },
     };
 
     let db_url = env::var("DATABASE_URL").context("get DATABASE_URL environment variable")?;
@@ -241,14 +253,17 @@ async fn server(db_pool: PgPool, config: AppConfig) -> Server<AppState> {
     tera.autoescape_on(vec!["html"]);
 
     let google_oauth_client = make_client(&config.google_oauth).unwrap();
+    let github_oauth_client = make_client_github(&config.github_oauth).unwrap();
     
-    let middleware = SecureCookieSessionMiddleware::<Session>::new(config.secret_key.as_bytes().to_vec());
+    let middleware =
+        SecureCookieSessionMiddleware::<Session>::new(config.secret_key.as_bytes().to_vec());
 
     let state = AppState {
         db_pool,
         tera,
         config,
         google_oauth_client,
+        github_oauth_client
     };
 
     let mut app = tide::with_state(state);

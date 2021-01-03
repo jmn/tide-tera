@@ -1,12 +1,17 @@
-use http_types::Method;
-
 use {
-    crate::{Session, Request},
+    crate::{Request, Session},
     failure::Fail,
-    oauth2::{AuthorizationCode, CsrfToken, Scope, TokenResponse},
+    http_types,
     serde::Deserialize,
     tide::{Redirect, Response, Result, StatusCode},
-    http_types
+};
+
+use oauth2::{basic::BasicClient, TokenResponse};
+// Alternatively, this can be oauth2::curl::http_client or a custom.
+use oauth2::reqwest::http_client;
+use oauth2::{
+    AuthUrl, AuthorizationCode, ClientId, ClientSecret, CsrfToken, PkceCodeChallenge, RedirectUrl,
+    Scope, TokenUrl,
 };
 
 #[derive(Debug, Deserialize)]
@@ -43,7 +48,8 @@ pub(super) async fn login_authorized(req: Request) -> Result {
         .map_err(Fail::compat)?;
     let access_token = token.access_token();
 
-    let userinfo: UserInfoResponse = surf::get("https://www.googleapis.com/oauth2/v2/userinfo").header(
+    let userinfo: UserInfoResponse = surf::get("https://www.googleapis.com/oauth2/v2/userinfo")
+        .header(
             http_types::headers::AUTHORIZATION,
             format!("Bearer {}", access_token.secret()),
         )
