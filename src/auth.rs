@@ -1,11 +1,8 @@
 use {
     crate::{Request, Session},
-    http_types,
     serde::Deserialize,
     tide::{Redirect, Response, Result, StatusCode},
 };
-
-use oauth2::TokenResponse;
 // Alternatively, this can be oauth2::curl::http_client or a custom.
 use oauth2::reqwest::http_client;
 use oauth2::{AuthorizationCode, CsrfToken, Scope};
@@ -40,48 +37,57 @@ pub(super) async fn login(req: Request) -> Result<Redirect<String>> {
 
 pub(super) async fn login_authorized(req: Request) -> Result {
     let query: AuthRequestQuery = req.query()?;
+    // info!("query: %{:#?}", &query);
+
     let code = AuthorizationCode::new(query.code);
+    // info!("code: %{:#?}", &code);
+
     // let token_req = req.state().google_oauth_client.exchange_code(code);
-    let token_res = req
+    let token_result = req
         .state()
-        .github_oauth_client
+        .google_oauth_client
         .exchange_code(code)
         .request(http_client);
 
+    info!("Google returned the following token:\n{:?}\n", token_result);
+
     // let access_token = token_res.access_token();
+    // info!("token_result: %{:#?}", &token_result);
+    // info!("token_res: {:#?}", serde_json::from_str(&token_res.into()));
 
-    info!("CHECKING TOKEN");
+    // info!("CHECKING TOKEN");
+    // match &token_res {
+    //     Ok(token) => {
+    //         let access_token = token.access_token();
 
-    match &token_res {
-        Ok(token) => {
-            // NB: Github returns a single comma-separated "scope" parameter instead of multiple
-            // space-separated scopes. Github-specific clients can parse this scope into
-            // multiple scopes by splitting at the commas. Note that it's not safe for the
-            // library to do this by default because RFC 6749 allows scopes to contain commas.
-            let scopes = if let Some(scopes_vec) = token.scopes() {
-                scopes_vec
-                    .iter()
-                    .map(|comma_separated| comma_separated.split(','))
-                    .flatten()
-                    .collect::<Vec<_>>()
-            } else {
-                Vec::new()
-            };
-            info!("Github returned the following scopes:\n{:?}\n", scopes);
+    //         // NB: Github returns a single comma-separated "scope" parameter instead of multiple
+    //         // space-separated scopes. Github-specific clients can parse this scope into
+    //         // multiple scopes by splitting at the commas. Note that it's not safe for the
+    //         // library to do this by default because RFC 6749 allows scopes to contain commas.
+    //         let scopes = if let Some(scopes_vec) = token.scopes() {
+    //             scopes_vec
+    //                 .iter()
+    //                 .map(|comma_separated| comma_separated.split(','))
+    //                 .flatten()
+    //                 .collect::<Vec<_>>()
+    //         } else {
+    //             Vec::new()
+    //         };
+    //         info!("Github returned the following scopes:\n{:?}\n", scopes);
 
-            // let userinfo: UserInfoResponse =
-            //     surf::get("https://www.googleapis.com/oauth2/v2/userinfo")
-            //         .header(
-            //             http_types::headers::AUTHORIZATION,
-            //             format!("Bearer {}", token.access_token().secret()),
-            //         )
-            //         .recv_json()
-            //         .await?;
-        }
-        Err(e) => {
-            info!("TOKEN FAILED: {:?} {:?} ", e, token_res)
-        }
-    }
+    //         // let userinfo: UserInfoResponse =
+    //         //     surf::get("https://www.googleapis.com/oauth2/v2/userinfo")
+    //         //         .header(
+    //         //             http_types::headers::AUTHORIZATION,
+    //         //             format!("Bearer {}", token.access_token().secret()),
+    //         //         )
+    //         //         .recv_json()
+    //         //         .await?;
+    //     }
+    //     Err(e) => {
+    //         info!("TOKEN FAILED: {:?} {:?} ", e, token_res)
+    //     }
+    // }
 
     // if let Ok(token) = token_res {
 

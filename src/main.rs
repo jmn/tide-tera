@@ -189,7 +189,8 @@ impl RestEntity {
 #[async_std::main]
 async fn main() -> tide::Result<()> {
     dotenv::dotenv().ok();
-    tide::log::start();
+    tide::log::with_level(tide::log::LevelFilter::Debug);
+    // tide::log::start();
 
     let config = AppConfig {
         secret_key: env::var("APP_SECRET_KEY")
