@@ -1,4 +1,5 @@
 use google_oauth::make_client_github;
+use sqlx::query_as_unchecked;
 
 use {
     crate::{config::AppConfig, google_oauth::make_client},
@@ -96,7 +97,7 @@ impl RestEntity {
         let rows = query_as!(
             Dino,
             r#"
-            SELECT id, name, weight, diet from dinos as ""id!", name, weight, diet"
+            SELECT id, name, weight, diet from dinos
             "#
         )
         .fetch_all(&db_pool)
