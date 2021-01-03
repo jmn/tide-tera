@@ -2,6 +2,7 @@
 application:
   name: "tide-tera"
   project: "tide-tera"
+  publicly_accessible: true
   organization: "QoveryCommunity"
 databases:
 - type: "POSTGRESQL"
