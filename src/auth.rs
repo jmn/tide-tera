@@ -27,13 +27,12 @@ struct UserInfoResponse {
 }
 
 pub(super) async fn login(req: Request) -> Result<Redirect<String>> {
-    let oauth_client = &req.state().google_oauth_client;
+    // let oauth_client = &req.state().google_oauth_client;
+    let oauth_client = &req.state().github_oauth_client;
 
     let (authorize_url, _csrf_state) = oauth_client
         .authorize_url(CsrfToken::new_random)
-        .add_scope(Scope::new(
-            "https://www.googleapis.com/auth/userinfo.email".to_string(),
-        ))
+        .add_scope(Scope::new("user:email".to_string()))
         .url();
 
     Ok(Redirect::new(authorize_url.to_string()))
