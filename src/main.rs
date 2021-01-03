@@ -1,5 +1,7 @@
 use google_oauth::make_client_github;
+use http_types::headers::HeaderValue;
 use sqlx::query_as_unchecked;
+use tide::security::{CorsMiddleware, Origin};
 
 use {
     crate::{config::AppConfig, google_oauth::make_client},
@@ -255,21 +257,27 @@ async fn server(db_pool: PgPool, config: AppConfig) -> Server<AppState> {
 
     let google_oauth_client = make_client(&config.google_oauth).unwrap();
     let github_oauth_client = make_client_github(&config.github_oauth).unwrap();
-    
+
     let middleware =
         SecureCookieSessionMiddleware::<Session>::new(config.secret_key.as_bytes().to_vec());
+
+    let cors = CorsMiddleware::new()
+        .allow_methods("GET, POST, OPTIONS".parse::<HeaderValue>().unwrap())
+        .allow_origin(Origin::from("*"))
+        .allow_credentials(false);
 
     let state = AppState {
         db_pool,
         tera,
         config,
         google_oauth_client,
-        github_oauth_client
+        github_oauth_client,
     };
 
     let mut app = tide::with_state(state);
     app.with(middleware);
-
+    app.with(cors);
+    
     // index page
     app.at("/").get(|req: tide::Request<AppState>| async move {
         let session = session!(req);
