@@ -53,7 +53,7 @@ struct Dino {
     id: Uuid,
     name: String,
     weight: i32,
-    diet: String,
+    diet: Option<String>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
