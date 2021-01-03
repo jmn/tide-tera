@@ -51,9 +51,9 @@ pub struct AppState {
 #[derive(Debug, Clone, Deserialize, Serialize)]
 struct Dino {
     id: Uuid,
-    name: Option<String>,
-    weight: Option<i32>,
-    diet: Option<String>,
+    name: String,
+    weight: i32,
+    diet: String,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
