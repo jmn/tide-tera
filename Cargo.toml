@@ -19,7 +19,7 @@ tera = "1.6.1"
 tide-tera = "0.2.3"
 
 # AUTH CRATES
-oauth2 = { version = "3.0.0", default-features = false, features = ["futures-03", "reqwest-010"] }
+oauth2 = { version = "4.0.0-alpha.2" }
 tide-secure-cookie-session = { git = "https://github.com/pepoviola/tide-secure-cookie-session.git", branch = "bump-tide-0.15" }
 # surf = { version = "2.0.0-alpha.4", default-features = false, features = ["h1-client"] }
 surf = { version = "2.1.0", default-features = false, features = ["h1-client"] }
