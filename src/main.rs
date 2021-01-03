@@ -275,9 +275,10 @@ async fn server(db_pool: PgPool, config: AppConfig) -> Server<AppState> {
     };
 
     let mut app = tide::with_state(state);
+    app.with(tide::log::LogMiddleware::new());
     app.with(middleware);
     app.with(cors);
-    
+
     // index page
     app.at("/").get(|req: tide::Request<AppState>| async move {
         let session = session!(req);
