@@ -1,6 +1,5 @@
 use google_oauth::make_client_github;
 use http_types::headers::HeaderValue;
-use sqlx::query_as_unchecked;
 use tide::security::{CorsMiddleware, Origin};
 
 use {
@@ -247,7 +246,7 @@ fn register_rest_entity(app: &mut Server<AppState>, entity: RestEntity) {
         .delete(RestEntity::delete);
 }
 
-pub async fn make_db_pool(db_url: &String) -> PgPool {
+pub async fn make_db_pool(db_url: &str) -> PgPool {
     Pool::connect(&db_url).await.unwrap()
 }
 

@@ -60,7 +60,7 @@ pub(super) async fn login_authorized(req: Request) -> Result {
         .await?;
 
     let session = Session {
-        email: String::from(userinfo.email)
+        email: userinfo.email
     };
 
     let resp: Response = Redirect::new("/").into();
