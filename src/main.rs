@@ -1,4 +1,4 @@
-use google_oauth::make_client_github;
+// use google_oauth::make_client_github;
 use http_types::headers::HeaderValue;
 use tide::security::{CorsMiddleware, Origin};
 
@@ -249,7 +249,7 @@ async fn server(db_pool: PgPool, config: AppConfig) -> Server<AppState> {
     tera.autoescape_on(vec!["html"]);
 
     let google_oauth_client = make_client(&config.google_oauth).unwrap();
-    let github_oauth_client = make_client_github(&config.github_oauth).unwrap();
+    // let github_oauth_client = make_client_github(&config.github_oauth).unwrap();
 
     let session_middleware =
         SecureCookieSessionMiddleware::<Session>::new(config.secret_key.as_bytes().to_vec());
@@ -264,7 +264,7 @@ async fn server(db_pool: PgPool, config: AppConfig) -> Server<AppState> {
         tera,
         config,
         google_oauth_client,
-        github_oauth_client,
+        // github_oauth_client,
     };
 
     let mut app = tide::with_state(state);
