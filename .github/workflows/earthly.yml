@@ -46,14 +46,13 @@ jobs:
       env:
         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       run: heroku container:release -a ${{ secrets.HEROKU_APP_NAME }} web 
-    - name: Deploy to Google Cloud Run
-      - uses: google-github-actions/setup-gcloud@master
-        with:
-          version: '290.0.1'
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
-      - id: Deploy
-        uses: google-github-actions/deploy-cloudrun@main
-        with:
-          image: gcr.io/cloudrun/hello
-          service: hello-cloud-run
+    - uses: google-github-actions/setup-gcloud@master
+      with:
+        version: '290.0.1'
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+        export_default_credentials: true
+    - id: Deploy
+      uses: google-github-actions/deploy-cloudrun@main
+      with:
+        image: gcr.io/cloudrun/hello
+        service: hello-cloud-run
