@@ -257,10 +257,10 @@ async fn server(db_pool: PgPool, config: AppConfig) -> Server<AppState> {
     let google_oauth_client = make_client(&config.google_oauth).unwrap();
     let github_oauth_client = make_client_github(&config.github_oauth).unwrap();
 
-    let middleware =
+    let session_middleware =
         SecureCookieSessionMiddleware::<Session>::new(config.secret_key.as_bytes().to_vec());
 
-    let cors = CorsMiddleware::new()
+    let cors_middleware = CorsMiddleware::new()
         .allow_methods("GET, POST, OPTIONS".parse::<HeaderValue>().unwrap())
         .allow_origin(Origin::from("*"))
         .allow_credentials(false);
@@ -275,8 +275,8 @@ async fn server(db_pool: PgPool, config: AppConfig) -> Server<AppState> {
 
     let mut app = tide::with_state(state);
     app.with(tide::log::LogMiddleware::new());
-    app.with(middleware);
-    app.with(cors);
+    app.with(session_middleware);
+    app.with(cors_middleware);
 
     // index page
     app.at("/").get(|req: tide::Request<AppState>| async move {
