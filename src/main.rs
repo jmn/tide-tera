@@ -22,12 +22,6 @@ mod auth;
 mod config;
 mod google_oauth;
 
-// #[derive(Debug, Serialize, Deserialize)]
-// struct MySession {
-//     name: String,
-//     count: usize,
-// }
-
 macro_rules! session {
     ($req:expr) => {{
         let session = $req.ext::<Session>();
@@ -48,7 +42,7 @@ pub type Request = tide::Request<AppState>;
 pub struct AppState {
     config: AppConfig,
     google_oauth_client: BasicClient,
-    github_oauth_client: BasicClient,
+    // github_oauth_client: BasicClient,
     db_pool: PgPool,
     tera: Tera,
 }
@@ -205,14 +199,14 @@ async fn main() -> tide::Result<()> {
             redirect_url: env::var("APP_GOOGLE_OAUTH_REDIRECT_URL")
                 .context("get APP_GOOGLE_OAUTH_REDIRECT_URL environment variable")?,
         },
-        github_oauth: config::GitHubOauthConfig {
-            client_id: env::var("APP_GITHUB_OAUTH_CLIENT_ID")
-                .context("get APP_GITHUB_OAUTH_CLIENT_ID environment variable")?,
-            client_secret: env::var("APP_GITHUB_OAUTH_CLIENT_SECRET")
-                .context("get APP_GITHUB_OAUTH_CLIENT_SECRET environment variable")?,
-            redirect_url: env::var("APP_GITHUB_OAUTH_REDIRECT_URL")
-                .context("get APP_GITHUB_OAUTH_REDIRECT_URL environment variable")?,
-        },
+        // github_oauth: config::GitHubOauthConfig {
+        //     client_id: env::var("APP_GITHUB_OAUTH_CLIENT_ID")
+        //         .context("get APP_GITHUB_OAUTH_CLIENT_ID environment variable")?,
+        //     client_secret: env::var("APP_GITHUB_OAUTH_CLIENT_SECRET")
+        //         .context("get APP_GITHUB_OAUTH_CLIENT_SECRET environment variable")?,
+        //     redirect_url: env::var("APP_GITHUB_OAUTH_REDIRECT_URL")
+        //         .context("get APP_GITHUB_OAUTH_REDIRECT_URL environment variable")?,
+        // },
     };
 
     let db_url = env::var("DATABASE_URL").context("get DATABASE_URL environment variable")?;
