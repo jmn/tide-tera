@@ -3,10 +3,10 @@ WORKDIR /app
 
 plan:
     RUN cargo install cargo-chef --version 0.1.11
-    COPY recipe.json .
+    
     # Compute a lock-like file for our project
     RUN cargo chef prepare --recipe-path recipe.json
-    SAVE ARTIFACT recipe.json AS LOCAL recipe.json
+    SAVE ARTIFACT recipe.json recipe.json
 deps:
     FROM +plan
 
