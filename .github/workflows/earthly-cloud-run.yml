@@ -24,10 +24,10 @@ jobs:
           branch="${GITHUB_REF##*/}"
         fi
         git checkout -b "$branch" || true
-    - name: Login to GCR
+    - name: Login to GAR
       uses: docker/login-action@v1
       with:
-        registry: gcr.io
+        registry: europe-north1-docker.pkg.dev
         username: _json_key
         password: ${{ secrets.GCP_SA_KEY }}
     - name: Download latest earthly
@@ -44,5 +44,5 @@ jobs:
     - id: Deploy
       uses: google-github-actions/deploy-cloudrun@main
       with:
-        image: gcr.io/cloudrun/jmnoz/tide-tera:latest
+        image: europe-north1-docker.pkg.dev/b-jmnorlund-net/tide/jmnoz/tide-tera:latest
         service: tide
