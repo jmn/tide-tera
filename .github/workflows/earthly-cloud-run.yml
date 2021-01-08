@@ -37,7 +37,7 @@ jobs:
     - name: Run build
       run: earthly --push +docker-google
     - name: Deploy service to Cloud Run
-      uses: jmn/action-cloud-run@v1.0
+      uses: jmn/action-cloud-run@master
       with:
         image: europe-north1-docker.pkg.dev/b-jmnorlund-net/tide/jmnoz/tide-tera:latest
         service: tide
