@@ -44,7 +44,7 @@ jobs:
     #     project: b-jmnorlund-net
     #     region: europe-north1
     #     service key: ${{ secrets.GCP_SA_KEY_BASE64 }}
-    - id: Deploy service to Cloud Run
+    - name: Deploy service to Cloud Run
       uses: google-github-actions/deploy-cloudrun@main
       with:
         image: europe-north1-docker.pkg.dev/b-jmnorlund-net/tide/jmnoz/tide-tera:latest
