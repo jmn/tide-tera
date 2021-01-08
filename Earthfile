@@ -7,6 +7,7 @@ plan:
     # Compute a lock-like file for our project
     RUN cargo chef prepare --recipe-path recipe.json
     SAVE ARTIFACT recipe.json recipe.json
+
 deps:
     FROM +plan
 
@@ -46,12 +47,18 @@ docker:
         && DEBIAN_FRONTEND=noninteractive apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
     EXPOSE 9091
-    ENTRYPOINT ["./tide-tera"]
+
+berglas:
+    FROM us-docker.pkg.dev/berglas/berglas/berglas:latest
+    SAVE ARTIFACT /bin/berglas berglas
 
 docker-heroku:
     FROM +docker
+    ENTRYPOINT ["./tide-tera"]
     SAVE IMAGE --push jmnoz/tide-tera:latest
 
 docker-google:
     FROM +docker
+    COPY +berglas/berglas berglas
+    ENTRYPOINT ["exec ./berglas exec -- ./tide-tera"]
     SAVE IMAGE --push europe-north1-docker.pkg.dev/b-jmnorlund-net/tide/jmnoz/tide-tera:latest
