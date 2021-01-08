@@ -35,7 +35,7 @@ jobs:
     - name: Earthly version
       run: earthly --version
     - name: Run build
-      run: earthly --push +docker
+      run: earthly --push +docker-google
     - uses: google-github-actions/setup-gcloud@master
       with:
         version: '290.0.1'

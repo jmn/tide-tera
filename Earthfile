@@ -47,4 +47,11 @@ docker:
 
     EXPOSE 9091
     ENTRYPOINT ["./tide-tera"]
+
+docker-heroku:
+    FROM +docker
+    SAVE IMAGE --push jmnoz/tide-tera:latest
+
+docker-google:
+    FROM +docker
     SAVE IMAGE --push europe-north1-docker.pkg.dev/b-jmnorlund-net/tide/jmnoz/tide-tera:latest
