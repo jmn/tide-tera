@@ -36,11 +36,11 @@ jobs:
       run: earthly --version
     - name: Run build
       run: earthly --push +docker-google
-    - uses: google-github-actions/setup-gcloud@master
-      with:
-        version: '290.0.1'
-        service_account_key: ${{ secrets.GCP_SA_KEY }}
-        export_default_credentials: true
+    # - uses: google-github-actions/setup-gcloud@master
+    #   with:
+    #     version: '290.0.1'
+    #     service_account_key: ${{ secrets.GCP_SA_KEY }}
+    #     export_default_credentials: true
     - id: Deploy
       uses: google-github-actions/deploy-cloudrun@main
       with:
