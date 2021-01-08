@@ -60,5 +60,5 @@ docker-heroku:
 docker-google:
     FROM +docker
     COPY +berglas/berglas berglas
-    ENTRYPOINT ["exec ./berglas exec -- ./tide-tera"]
+    ENTRYPOINT exec ./berglas exec -- ./tide-tera
     SAVE IMAGE --push europe-north1-docker.pkg.dev/b-jmnorlund-net/tide/jmnoz/tide-tera:latest
