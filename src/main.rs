@@ -1,6 +1,5 @@
 // use google_oauth::make_client_github;
-use http_types::headers::HeaderValue;
-use tide::security::{CorsMiddleware, Origin};
+mod restentity;
 
 use {
     crate::{config::AppConfig, google_oauth::make_client},
@@ -9,13 +8,16 @@ use {
     oauth2::basic::BasicClient,
     serde::{Deserialize, Serialize},
     sqlx::Pool,
-    sqlx::{query, query_as, PgPool},
+    sqlx::{query_as, PgPool},
     std::env,
     tera::Tera,
-    tide::{listener::Listener, Body, Redirect, Response, Server},
+    tide::{listener::Listener, Redirect, Response, Server},
     tide_secure_cookie_session::SecureCookieSessionMiddleware,
     tide_tera::prelude::*,
     uuid::Uuid,
+    tide::security::{CorsMiddleware, Origin},
+    http_types::headers::HeaderValue,
+    restentity::RestEntity
 };
 
 mod auth;
@@ -58,128 +60,6 @@ struct Dino {
 #[derive(Debug, Clone, Deserialize, Serialize)]
 struct Dinos {
     dinos: Vec<Dino>,
-}
-
-struct RestEntity {
-    base_path: String,
-}
-
-impl RestEntity {
-    async fn create(mut req: Request) -> tide::Result {
-        let dino: Dino = req.body_json().await?;
-        let db_pool = req.state().db_pool.clone();
-        let row = query_as!(
-            Dino,
-            r#"
-            INSERT INTO dinos (id, name, weight, diet) VALUES
-            ($1, $2, $3, $4) returning id, name, weight, diet
-            "#,
-            dino.id,
-            dino.name,
-            dino.weight,
-            dino.diet
-        )
-        .fetch_one(&db_pool)
-        .await?;
-
-        let mut res = Response::new(201);
-        res.set_body(Body::from_json(&row)?);
-        Ok(res)
-    }
-
-    async fn list(req: tide::Request<AppState>) -> tide::Result {
-        let db_pool = req.state().db_pool.clone();
-        let rows = query_as!(
-            Dino,
-            r#"
-            SELECT id, name, weight, diet from dinos
-            "#
-        )
-        .fetch_all(&db_pool)
-        .await?;
-        let mut res = Response::new(200);
-        res.set_body(Body::from_json(&rows)?);
-        Ok(res)
-    }
-
-    async fn get(req: tide::Request<AppState>) -> tide::Result {
-        let db_pool = req.state().db_pool.clone();
-        let id: Uuid = Uuid::parse_str(req.param("id")?).unwrap();
-        let row = query_as!(
-            Dino,
-            r#"
-            SELECT  id, name, weight, diet from dinos
-            WHERE id = $1
-            "#,
-            id
-        )
-        .fetch_optional(&db_pool)
-        .await?;
-
-        let res = match row {
-            None => Response::new(404),
-            Some(row) => {
-                let mut r = Response::new(200);
-                r.set_body(Body::from_json(&row)?);
-                r
-            }
-        };
-
-        Ok(res)
-    }
-
-    async fn update(mut req: tide::Request<AppState>) -> tide::Result {
-        let dino: Dino = req.body_json().await?;
-        let db_pool = req.state().db_pool.clone();
-        let id: Uuid = Uuid::parse_str(req.param("id")?).unwrap();
-        let row = query_as!(
-            Dino,
-            r#"
-            UPDATE dinos SET name = $2, weight = $3, diet = $4
-            WHERE id = $1
-            returning id, name, weight, diet
-            "#,
-            id,
-            dino.name,
-            dino.weight,
-            dino.diet
-        )
-        .fetch_optional(&db_pool)
-        .await?;
-
-        let res = match row {
-            None => Response::new(404),
-            Some(row) => {
-                let mut r = Response::new(200);
-                r.set_body(Body::from_json(&row)?);
-                r
-            }
-        };
-
-        Ok(res)
-    }
-
-    async fn delete(req: tide::Request<AppState>) -> tide::Result {
-        let db_pool = req.state().db_pool.clone();
-        let id: Uuid = Uuid::parse_str(req.param("id")?).unwrap();
-        let row = query!(
-            r#"
-            delete from dinos
-            WHERE id = $1
-            returning id
-            "#,
-            id
-        )
-        .fetch_optional(&db_pool)
-        .await?;
-
-        let res = match row {
-            None => Response::new(404),
-            Some(_) => Response::new(204),
-        };
-
-        Ok(res)
-    }
 }
 
 #[async_std::main]
