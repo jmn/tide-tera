@@ -1,5 +1,6 @@
 FROM rust:1.49
 WORKDIR /app
+VOLUME $HOME
 
 plan:
     RUN cargo install cargo-chef --version 0.1.11
