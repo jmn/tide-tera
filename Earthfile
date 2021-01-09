@@ -1,6 +1,5 @@
 FROM rust:1.49
 WORKDIR /app
-VOLUME $HOME
 
 plan:
     RUN cargo install cargo-chef --version 0.1.11
@@ -21,7 +20,7 @@ deps:
 
 build:
     FROM +deps
-    ARG HOME
+    
     # Copy over the cached dependencies
     COPY +deps/target .
     COPY +deps/cargo /usr/local/cargo
@@ -34,7 +33,6 @@ build:
     SAVE ARTIFACT target/release/tide-tera tide-tera
     SAVE ARTIFACT templates templates
     SAVE ARTIFACT public public
-    SAVE ARTIFACT .build-env AS LOCAL $HOME/.build-env
 
 docker:
     FROM debian:buster-slim

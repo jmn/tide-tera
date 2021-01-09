@@ -35,7 +35,7 @@ jobs:
     - name: Earthly version
       run: earthly --version
     - name: Run build
-      run: earthly --build-arg HOME=$HOME --push +docker-google
+      run: earthly --push +docker-google
     - name: Deploy service to Cloud Run
       uses: jmn/action-cloud-run@master
       with:
@@ -43,5 +43,5 @@ jobs:
         service: tide
         project: b-jmnorlund-net
         region: europe-north1
-        env: $HOME/.build-env
+        env: ${{ secrets.GCP_CLOUD_RUN_ENV }}
         service key: ${{ secrets.GCP_SA_KEY_BASE64 }}
