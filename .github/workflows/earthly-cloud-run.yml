@@ -36,18 +36,18 @@ jobs:
       run: earthly --version
     - name: Run build
       run: earthly --push +docker-google
-    # - name: Deploy service to Cloud Run
-    #   uses: jmn/action-cloud-run@master
-    #   with:
-    #     image: europe-north1-docker.pkg.dev/b-jmnorlund-net/tide/jmnoz/tide-tera:latest
-    #     service: tide
-    #     project: b-jmnorlund-net
-    #     region: europe-north1
-    #     service key: ${{ secrets.GCP_SA_KEY_BASE64 }}
     - name: Deploy service to Cloud Run
-      uses: google-github-actions/deploy-cloudrun@main
+      uses: jmn/action-cloud-run@master
       with:
         image: europe-north1-docker.pkg.dev/b-jmnorlund-net/tide/jmnoz/tide-tera:latest
         service: tide
+        project: b-jmnorlund-net
         region: europe-north1
-        credentials: ${{ secrets.GCP_SA_KEY }}
+        service key: ${{ secrets.GCP_SA_KEY_BASE64 }}
+    # - name: Deploy service to Cloud Run
+    #   uses: google-github-actions/deploy-cloudrun@main
+    #   with:
+    #     image: europe-north1-docker.pkg.dev/b-jmnorlund-net/tide/jmnoz/tide-tera:latest
+    #     service: tide
+    #     region: europe-north1
+    #     credentials: ${{ secrets.GCP_SA_KEY }}
