@@ -49,7 +49,7 @@ pub(super) async fn login_authorized(req: Request) -> Result {
         .exchange_code(code)
         .request(http_client);
 
-    info!("Google returned the following token:\n{:?}\n", token_result);
+    // info!("Google returned the following token:\n{:?}\n", token_result);
 
     let userinfo: UserInfoResponse = surf::get("https://www.googleapis.com/oauth2/v2/userinfo")
         .header(

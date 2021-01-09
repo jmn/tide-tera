@@ -5,6 +5,7 @@ mod google_oauth;
 mod handlers;
 mod types;
 
+use tide::log::info;
 pub use types::{AppConfig, AppState, Dino, Request, Session};
 
 use {
@@ -73,6 +74,7 @@ async fn main() -> tide::Result<()> {
 }
 
 pub async fn make_db_pool(db_url: &str) -> PgPool {
+    info!("CONNECTING TO DATABASE_URL: {:?}\n", &db_url);
     Pool::connect(&db_url).await.unwrap()
 }
 
