@@ -1,5 +1,0 @@
-APP_SECRET_KEY=berglas://tide-data-bucket/tide_app_secret
-APP_GOOGLE_OAUTH_CLIENT_SECRET=berglas://tide-data-bucket/google_oauth_secret
-DATABASE_URL=berglas://tide-data-bucket/heroku_database_url
-APP_GOOGLE_OAUTH_CLIENT_ID=633107095349-lf3e2shnuf8024b6snc1bt92orci4ru2.apps.googleusercontent.com
-APP_GOOGLE_OAUTH_REDIRECT_URL=https://tide.jmnorlund.net/login/authorized/
