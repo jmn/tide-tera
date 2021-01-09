@@ -1,7 +1,7 @@
 // use crate::config::GitHubOauthConfig;
 
 use {
-    crate::config::GoogleOAuthConfig,
+    crate::types::GoogleOAuthConfig,
     anyhow::Result,
     oauth2::{basic::BasicClient, AuthUrl, ClientId, ClientSecret, RedirectUrl, TokenUrl},
 };

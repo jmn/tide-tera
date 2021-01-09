@@ -1,66 +1,32 @@
 // use google_oauth::make_client_github;
-mod restentity;
+mod auth;
+mod google_oauth;
+mod types;
+mod controllers;
+mod handlers;
 
-use {
-    crate::{config::AppConfig, google_oauth::make_client},
-    anyhow::Context,
-    dotenv,
-    oauth2::basic::BasicClient,
-    serde::{Deserialize, Serialize},
-    sqlx::Pool,
-    sqlx::{query_as, PgPool},
-    std::env,
-    tera::Tera,
-    tide::{listener::Listener, Redirect, Response, Server},
-    tide_secure_cookie_session::SecureCookieSessionMiddleware,
-    tide_tera::prelude::*,
-    uuid::Uuid,
-    tide::security::{CorsMiddleware, Origin},
-    http_types::headers::HeaderValue,
-    restentity::RestEntity
+pub use {
+    types::{AppConfig, Session, Request, AppState, RestEntity, Dino}
 };
 
-mod auth;
-mod config;
-mod google_oauth;
-
-macro_rules! session {
-    ($req:expr) => {{
-        let session = $req.ext::<Session>();
-        if session.is_none() {
-            return Ok(Redirect::new("/login/").into());
-        }
-        session.unwrap()
-    }};
-}
-
-#[derive(Debug, Deserialize, Serialize)]
-pub struct Session {
-    pub email: String,
-}
-pub type Request = tide::Request<AppState>;
-
-#[derive(Clone, Debug)]
-pub struct AppState {
-    config: AppConfig,
-    google_oauth_client: BasicClient,
-    // github_oauth_client: BasicClient,
-    db_pool: PgPool,
-    tera: Tera,
-}
-
-#[derive(Debug, Clone, Deserialize, Serialize)]
-struct Dino {
-    id: Uuid,
-    name: String,
-    weight: i32,
-    diet: Option<String>,
-}
-
-#[derive(Debug, Clone, Deserialize, Serialize)]
-struct Dinos {
-    dinos: Vec<Dino>,
-}
+use {
+    crate::{google_oauth::make_client},
+    types::GoogleOAuthConfig,
+    anyhow::Context,
+    dotenv,
+    sqlx::{Pool, PgPool},
+    std::env,
+    tera::Tera,
+    tide::{Error, listener::Listener, Redirect, Server},
+    tide_secure_cookie_session::SecureCookieSessionMiddleware,
+    tide_tera::prelude::*,
+    tide::security::{CorsMiddleware, Origin},
+    http_types::headers::HeaderValue,
+    // controllers::dino,
+    controllers::views,
+    uuid::Uuid
+   
+};
 
 #[async_std::main]
 async fn main() -> tide::Result<()> {
@@ -71,7 +37,7 @@ async fn main() -> tide::Result<()> {
     let config = AppConfig {
         secret_key: env::var("APP_SECRET_KEY")
             .context("get APP_SECRET_KEY environment variable")?,
-        google_oauth: config::GoogleOAuthConfig {
+        google_oauth: GoogleOAuthConfig {
             client_id: env::var("APP_GOOGLE_OAUTH_CLIENT_ID")
                 .context("get APP_GOOGLE_OAUTH_CLIENT_ID environment variable")?,
             client_secret: env::var("APP_GOOGLE_OAUTH_CLIENT_SECRET")
@@ -153,27 +119,7 @@ async fn server(db_pool: PgPool, config: AppConfig) -> Server<AppState> {
     app.with(cors_middleware);
 
     // index page
-    app.at("/").get(|req: tide::Request<AppState>| async move {
-        let session = session!(req);
-        let tera = req.state().tera.clone();
-        let db_pool = req.state().db_pool.clone();
-        let rows = query_as!(
-            Dino,
-            r#"
-            SELECT id, name, weight, diet from dinos
-            "#
-        )
-        .fetch_all(&db_pool)
-        .await?;
-        tera.render_response(
-            "index.html",
-            &context! {
-               "title" => String::from("Tide basic CRUD"),
-               "dinos" => rows,
-               "user_email" => session.email
-            },
-        )
-    });
+    app.at("/").get(views::index);
 
     app.at("/public")
         .serve_dir("./public/")
@@ -186,54 +132,8 @@ async fn server(db_pool: PgPool, config: AppConfig) -> Server<AppState> {
     login.at("/").get(auth::login);
     login.at("authorized/").get(auth::login_authorized);
 
-    // new dino
-    app.at("/dinos/new")
-        .get(|req: tide::Request<AppState>| async move {
-            let tera = req.state().tera.clone();
-
-            tera.render_response(
-                "form.html",
-                &context! {
-                   "title" => String::from("Create new dino")
-                },
-            )
-        });
-
-    // edit dino
-    app.at("/dinos/:id/edit")
-        .get(|req: tide::Request<AppState>| async move {
-            let tera = req.state().tera.clone();
-            let db_pool = req.state().db_pool.clone();
-            let id: Uuid = Uuid::parse_str(req.param("id")?).unwrap();
-            let row = query_as!(
-                Dino,
-                r#"
-            SELECT  id, name, weight, diet from dinos
-            WHERE id = $1
-            "#,
-                id
-            )
-            .fetch_optional(&db_pool)
-            .await?;
-
-            let res = match row {
-                None => Response::new(404),
-                Some(row) => {
-                    let mut r = Response::new(200);
-                    let b = tera.render_body(
-                        "form.html",
-                        &context! {
-                            "title" => String::from("Edit dino"),
-                            "dino" => row
-                        },
-                    )?;
-                    r.set_body(b);
-                    r
-                }
-            };
-
-            Ok(res)
-        });
+    app.at("/dinos/new").get(views::new);
+    app.at("/dinos/:id/edit").get(views::edit);
 
     let dinos_endpoint = RestEntity {
         base_path: String::from("/dinos"),
