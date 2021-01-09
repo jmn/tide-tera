@@ -74,7 +74,7 @@ async fn main() -> tide::Result<()> {
 }
 
 pub async fn make_db_pool(db_url: &str) -> PgPool {
-    info!("CONNECTING TO DATABASE_URL: {:?}\n", &db_url);
+    // info!("CONNECTING TO DATABASE_URL: {:?}\n", &db_url); // WARNING
     Pool::connect(&db_url).await.unwrap()
 }
 
