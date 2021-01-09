@@ -43,7 +43,7 @@ jobs:
         service: tide
         project: b-jmnorlund-net
         region: europe-north1
-        env: ".build-env"
+        env: $GITHUB_WORKSPACE/.build-env
         service key: ${{ secrets.GCP_SA_KEY_BASE64 }}
     # - name: Deploy service to Cloud Run
     #   uses: google-github-actions/deploy-cloudrun@main

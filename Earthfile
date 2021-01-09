@@ -33,7 +33,7 @@ build:
     SAVE ARTIFACT target/release/tide-tera tide-tera
     SAVE ARTIFACT templates templates
     SAVE ARTIFACT public public
-    SAVE ARTIFACT .build-env AS LOCAL .build-env
+    SAVE ARTIFACT .build-env AS LOCAL $GITHUB_WORKSPACE/.build-env
 
 docker:
     FROM debian:buster-slim
