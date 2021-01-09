@@ -21,7 +21,7 @@ deps:
 
 build:
     FROM +deps
-
+    ARG HOME
     # Copy over the cached dependencies
     COPY +deps/target .
     COPY +deps/cargo /usr/local/cargo
@@ -39,10 +39,6 @@ build:
 docker:
     FROM debian:buster-slim
     
-    COPY +build/tide-tera tide-tera
-    COPY +build/templates templates
-    COPY +build/public public
-    
     RUN apt-get update -y \
         && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends openssl libcurl4 ca-certificates \
         # Clean up
@@ -53,14 +49,6 @@ docker:
 berglas:
     FROM us-docker.pkg.dev/berglas/berglas/berglas:latest
     SAVE ARTIFACT /bin/berglas berglas
-
-docker-heroku:
-    FROM +docker
-    COPY +build/tide-tera tide-tera
-    COPY +build/templates templates
-    COPY +build/public public
-    ENTRYPOINT ["./tide-tera"]
-    SAVE IMAGE --push jmnoz/tide-tera:latest
 
 docker-google:
     FROM +docker
