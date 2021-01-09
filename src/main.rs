@@ -1,31 +1,28 @@
 // use google_oauth::make_client_github;
 mod auth;
-mod google_oauth;
-mod types;
 mod controllers;
+mod google_oauth;
 mod handlers;
+mod types;
 
-pub use {
-    types::{AppConfig, Session, Request, AppState, RestEntity, Dino}
-};
+pub use types::{AppConfig, AppState, Dino, Request, Session};
 
 use {
-    crate::{google_oauth::make_client},
-    types::GoogleOAuthConfig,
+    crate::google_oauth::make_client,
     anyhow::Context,
+    controllers::dino,
+    controllers::views,
     dotenv,
-    sqlx::{Pool, PgPool},
+    http_types::headers::HeaderValue,
+    sqlx::{PgPool, Pool},
     std::env,
     tera::Tera,
-    tide::{Error, listener::Listener, Redirect, Server},
+    tide::security::{CorsMiddleware, Origin},
+    tide::{listener::Listener, Error, Redirect, Server},
     tide_secure_cookie_session::SecureCookieSessionMiddleware,
     tide_tera::prelude::*,
-    tide::security::{CorsMiddleware, Origin},
-    http_types::headers::HeaderValue,
-    // controllers::dino,
-    controllers::views,
-    uuid::Uuid
-   
+    types::GoogleOAuthConfig,
+    uuid::Uuid,
 };
 
 #[async_std::main]
@@ -73,17 +70,6 @@ async fn main() -> tide::Result<()> {
     listener.accept().await.unwrap();
 
     Ok(())
-}
-
-fn register_rest_entity(app: &mut Server<AppState>, entity: RestEntity) {
-    app.at(&entity.base_path)
-        .get(RestEntity::list)
-        .post(RestEntity::create);
-
-    app.at(&format!("{}/:id", entity.base_path))
-        .get(RestEntity::get)
-        .put(RestEntity::update)
-        .delete(RestEntity::delete);
 }
 
 pub async fn make_db_pool(db_url: &str) -> PgPool {
@@ -135,11 +121,13 @@ async fn server(db_pool: PgPool, config: AppConfig) -> Server<AppState> {
     app.at("/dinos/new").get(views::new);
     app.at("/dinos/:id/edit").get(views::edit);
 
-    let dinos_endpoint = RestEntity {
-        base_path: String::from("/dinos"),
-    };
+    // api
+    app.at("/dinos").get(dino::list).post(dino::create);
 
-    register_rest_entity(&mut app, dinos_endpoint);
+    app.at("dinos/:id")
+        .get(dino::get)
+        .put(dino::update)
+        .delete(dino::delete);
 
     app
 }

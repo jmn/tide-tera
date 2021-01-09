@@ -22,7 +22,8 @@ pub async fn index(req: Request<AppState>) -> tide::Result {
         "index.html",
         &context! {
            "title" => String::from("Tide basic CRUD"),
-           "dinos" => rows
+           "dinos" => rows,
+           "user_email" => session.email
         },
     )
 }

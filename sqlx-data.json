@@ -1,7 +1,7 @@
 {
   "db": "PostgreSQL",
-  "4e80b973e95a64a8b6695b120c902b49bd25df3d079a2fd364976b4b4b201db1": {
-    "query": "\n            UPDATE dinos SET name = $2, weight = $3, diet = $4\n            WHERE id = $1\n            returning id, name, weight, diet\n            ",
+  "17dbe8dd16d61aff69f54c9fcf0fa3e06824de38bc6eb436f80ace83a87aede2": {
+    "query": "\n        UPDATE dinos SET name = $2, weight = $3, diet = $4\n        WHERE id = $1\n        returning id, name, weight, diet\n        ",
     "describe": {
       "columns": [
         {
@@ -35,57 +35,19 @@
       },
       "nullable": [
         false,
-        false,
-        false,
+        true,
+        true,
         true
       ]
     }
   },
-  "5a6bf440a7e1af67f8dcc7d5d909f4b8a0ec8e4bcc2050008f4f1f3d9fa0578f": {
-    "query": "\n            SELECT  id, name, weight, diet from dinos\n            WHERE id = $1\n            ",
+  "42d497a2276083391366f26e02b1af7d7331751f928369aee3e0601de7fc6c3b": {
+    "query": "\n        INSERT INTO dinos (id, name, weight, diet) VALUES\n        ($1, $2, $3, $4) returning id as \"id!\", name, weight, diet\n        ",
     "describe": {
       "columns": [
         {
           "ordinal": 0,
-          "name": "id",
-          "type_info": "Uuid"
-        },
-        {
-          "ordinal": 1,
-          "name": "name",
-          "type_info": "Text"
-        },
-        {
-          "ordinal": 2,
-          "name": "weight",
-          "type_info": "Int4"
-        },
-        {
-          "ordinal": 3,
-          "name": "diet",
-          "type_info": "Text"
-        }
-      ],
-      "parameters": {
-        "Left": [
-          "Uuid"
-        ]
-      },
-      "nullable": [
-        false,
-        false,
-        false,
-        true
-      ]
-    }
-  },
-  "72f64842706f6c87a852ec8f6795aae9b5d59beb59a2b0573975559ad8454c4d": {
-    "query": "\n            INSERT INTO dinos (id, name, weight, diet) VALUES\n            ($1, $2, $3, $4) returning id, name, weight, diet\n            ",
-    "describe": {
-      "columns": [
-        {
-          "ordinal": 0,
-          "name": "id",
+          "name": "id!",
           "type_info": "Uuid"
         },
         {
@@ -114,20 +76,35 @@
       },
       "nullable": [
         false,
-        false,
-        false,
+        true,
+        true,
         true
       ]
     }
   },
-  "cf5e2f3ae9a9c18d589d2f10e5bb25b9351cef712a8a6c1de100b5a8a5cd053d": {
-    "query": "\n            delete from dinos\n            WHERE id = $1\n            returning id\n            ",
+  "8d7161207b7018cecf1d90ecdb9c28e7a74ce5ea1ba85b99cd38c28aedc7ec85": {
+    "query": "\n        SELECT  id, name, weight, diet from dinos\n        WHERE id = $1\n        ",
     "describe": {
       "columns": [
         {
           "ordinal": 0,
           "name": "id",
           "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "name",
+          "type_info": "Text"
+        },
+        {
+          "ordinal": 2,
+          "name": "weight",
+          "type_info": "Int4"
+        },
+        {
+          "ordinal": 3,
+          "name": "diet",
+          "type_info": "Text"
         }
       ],
       "parameters": {
@@ -136,12 +113,15 @@
         ]
       },
       "nullable": [
-        false
+        false,
+        true,
+        true,
+        true
       ]
     }
   },
-  "d972e3e2b8e68ed5ffd905f5d9cfbeb0dafd7377af2811c2b2b669a739a3750b": {
-    "query": "\n            SELECT id, name, weight, diet from dinos\n            ",
+  "c8f64e65a795d7227c9c930834178ad9f40246637e2ff3867e039578f6c84ed9": {
+    "query": "\n        SELECT id, name, weight, diet from dinos\n        ",
     "describe": {
       "columns": [
         {
@@ -170,9 +150,29 @@
       },
       "nullable": [
         false,
-        false,
-        false,
+        true,
+        true,
         true
+      ]
+    }
+  },
+  "ed8b9b3db1610a010414acff6eaecf45ccddbf6970129e4a6dd49a9812bd26f8": {
+    "query": "\n        delete from dinos\n        WHERE id = $1\n        returning id\n        ",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      },
+      "nullable": [
+        false
       ]
     }
   }
