@@ -1,3 +1,5 @@
+use std::time::{Duration, Instant};
+
 use super::*;
 use crate::Dino;
 use sqlx::{PgPool, query, query_as};
@@ -32,6 +34,22 @@ pub async fn list(db_pool: &PgPool) -> tide::Result<Vec<Dino>> {
     .map_err(|e| Error::new(409, e))?;
 
     Ok(rows)
+}
+
+pub async fn list_timed(db_pool: &PgPool) -> tide::Result<(Vec<Dino>, Duration)> {
+    let start = Instant::now();
+    let rows = query_as!(
+        Dino,
+        r#"
+        SELECT id, name, weight, diet from dinos
+        "#
+    )
+    .fetch_all(db_pool)
+    .await
+    .map_err(|e| Error::new(409, e))?;
+    let elapsed = start.elapsed();
+
+    Ok((rows, elapsed))
 }
 
 pub async fn get(id: Uuid, db_pool: &PgPool) -> tide::Result<Option<Dino>> {

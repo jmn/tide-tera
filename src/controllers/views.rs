@@ -16,14 +16,16 @@ pub async fn index(req: Request<AppState>) -> tide::Result {
     let session = session!(req);
     let tera = req.state().tera.clone();
     let db_pool = req.state().db_pool.clone();
-    let rows = handlers::dino::list(&db_pool).await?;
+    // let rows = handlers::dino::list(&db_pool).await?;
+    let (rows, execution_time) = handlers::dino::list_timed(&db_pool).await?;
 
     tera.render_response(
         "index.html",
         &context! {
            "title" => String::from("Tide basic CRUD"),
            "dinos" => rows,
-           "user_email" => session.email
+           "user_email" => session.email,
+           "db_execution_time_ms" => format!("{}", execution_time.as_millis())
         },
     )
 }
