@@ -5,8 +5,8 @@ name: Earthly CI with Google Cloud Run deploy
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
+#  pull_request:
+#    branches: [ main ]
 
 jobs:
   build:
