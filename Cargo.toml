@@ -9,7 +9,7 @@ debug = true
 
 [dependencies]
 anyhow = "1.0"
-sqlx = { version = "0.4.2", features = [ "runtime-async-std-native-tls", "macros", "chrono", "json", "postgres", "uuid", "offline"] }
+sqlx = { version = "0.5.1", features = [ "runtime-async-std-native-tls", "macros", "chrono", "json", "postgres", "uuid", "offline"] }
 chrono = "0.4"
 dotenv = "0.15"
 uuid = { version = "0.8", features = ["v4", "serde"] }
