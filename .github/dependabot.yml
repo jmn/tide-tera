@@ -1,0 +1,32 @@
+version: 2
+updates:
+- package-ecosystem: cargo
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: tera
+    versions:
+    - 1.7.0
+    - 1.7.1
+  - dependency-name: oauth2
+    versions:
+    - 4.0.0-alpha.4
+    - 4.0.0-alpha.5
+    - 4.0.0-alpha.6
+    - 4.0.0-beta.1
+  - dependency-name: anyhow
+    versions:
+    - 1.0.39
+  - dependency-name: serde
+    versions:
+    - 1.0.123
+    - 1.0.124
+  - dependency-name: serde_json
+    versions:
+    - 1.0.62
+    - 1.0.63
+  - dependency-name: http-types
+    versions:
+    - 2.10.0
