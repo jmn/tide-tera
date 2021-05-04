@@ -26,7 +26,7 @@ oauth2 = { version = "4.0.0-alpha.3" }
 tide-secure-cookie-session = { git = "https://github.com/pepoviola/tide-secure-cookie-session.git", branch = "bump-tide-0.15" }
 surf = { version = "2.1.0" }
 failure = "0.1.8"
-http-types = "2.9.0"
+http-types = "2.11.1"
 oauth2-surf = "0.1.1"
 
 # [patch.crates-io]
